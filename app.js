@@ -1,24 +1,31 @@
 const express = require("express");
-const { default: mongoose } = require("mongoose");
 const mongoose = require("mongoose");
+const router = require("./routes/index");
 
-const PORT = process.env.PORT || 3000;
+// const PORT = process.env.PORT || 3000;
 const app = express();
 
-// непонятно, нужно ли:
-async function start() {
-  try {
-    await mongoose.connect("mongodb://localhost:27017/mestodb", {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-    });
-    app.listen(PORT, () => {
-      console.log("Сервер уже запущен...");
-    });
-  } catch (e) {
-    console.log(e);
-  }
-}
+// подключаемся к серверу mongo
+mongoose.connect("mongodb://localhost:27017/mestodb", {
+  useNewUrlParser: true,
+  // useCreateIndex: true,
+  // useFindAndModify: false,
+});
 
-start();
+app.use(express.json());
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5d8b8592978f8bd833ca8133' // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
+
+app.use(router);
+
+app.listen(3000, () => {
+  console.log("слушаю порт 3000...");
+});
+
+

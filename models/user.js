@@ -2,18 +2,21 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   name: {
-    // у пользователя есть имя — опишем требования к имени в схеме:
-    type: String, // имя — это строка
-    required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
-    minlength: 2, // минимальная длина имени — 2 символа
-    maxlength: 30, // а максимальная — 30 символов
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
+  },
+  about: {
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
   avatar: {
-    type: String, // ссылка на аватарку — это строка
-    required: true, // оно должно быть у каждого пользователя, так что аватар — обязательное поле
+    type: String,
+    required: true,
   },
-  about: String, // информация о пользователе — String
-  required: true, // оно должно быть у каждого пользователя, так что информация о пользователе — обязательное поле
-  minlength: 2, // минимальная длина имени — 2 символа
-  maxlength: 30, // а максимальная — 30 символов
 });
+
+module.exports = mongoose.model("user", userSchema);

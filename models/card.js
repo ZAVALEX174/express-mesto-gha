@@ -1,29 +1,30 @@
 const mongoose = require("mongoose");
-
-// роазобраться с owner, likes, createdAt
-
 const cardSchema = new mongoose.Schema({
   name: {
-    // у карточки есть имя — опишем требования к имени в схеме:
-    type: String, // имя — это строка
-    required: true, // оно должно быть у каждой карточки, так что имя — обязательное поле
-    minlength: 2, // минимальная длина имени — 2 символа
-    maxlength: 30, // а максимальная — 30 символов
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
   link: {
-    type: String, // ссылка на карточку — это строка
-    required: true, // оно должно быть у каждой карточки должна быть ссылка, так что ссылка — обязательное поле
+    type: String,
+    required: true,
   },
   owner: {
-    type: ObjectId, // ссылка на идентификатор объекта — это идентификатор объекта
-    required: true, // оно должно быть у каждой карточки должна быть ссылка, так что ссылка — обязательное поле
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
   },
   likes: {
-    type: ObjectId, // ссылка на идентификатор объекта — это массив идентификатор объекта
-    required: true, // оно должно быть у каждой карточки должна быть ссылка, так что ссылка — обязательное поле
+    type: [mongoose.Schema.Types.ObjectId],
+    default: [],
+    minlength: 2,
+    maxlength: 30,
   },
   createdAt: {
-    date: { type: Date, default: Date.now },
+    type: Date,
+    default: Date.now,
   },
 });
-// роазобраться с owner, likes, createdAt(вроде бы разобрался)
+
+module.exports = mongoose.model("card", cardSchema);
