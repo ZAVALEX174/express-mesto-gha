@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 // const getUsers = async (req, res) => {
 //   try {
@@ -15,46 +15,37 @@ const User = require("../models/user");
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({
-        message: "Internal Server Error",
-        err: err.message,
-        stack: err.stack,
-      })
-    );
+    .then((user) => res.status(200).send(user))
+    .catch((err) => res.status(500).send({
+      message: 'Internal Server Error',
+      err: err.message,
+      stack: err.stack,
+    }));
 };
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(() => new Error("Not found"))
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err.message === "Not found") {
-        res.status(404).send({
-          message: "User not found",
-        });
+    .then((user) => {
+      if (user) {
+        res.status(200).send({ data: user });
       } else {
-        res.status(500).send({
-          message: "Internal Server Error",
-          err: err.message,
-          stack: err.stack,
+        res.status(404).send({
+          message: 'Нет пользователя с таким id',
         });
       }
-    });
+    })
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({
-        message: "Internal Server Error",
-        err: err.message,
-        stack: err.stack,
-      })
-    );
+    .then((user) => res.status(201).send(user))
+    .catch((err) => res.status(500).send({
+      message: 'Internal Server Error',
+      err: err.message,
+      stack: err.stack,
+    }));
 };
 
 const updateUser = (req, res) => {
@@ -63,28 +54,24 @@ const updateUser = (req, res) => {
     about: req.body.about,
     avatar: req.body.avatar,
   })
-    .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({
-        message: "Internal Server Error",
-        err: err.message,
-        stack: err.stack,
-      })
-    );
+    .then((user) => res.send(user))
+    .catch((err) => res.status(500).send({
+      message: 'Internal Server Error',
+      err: err.message,
+      stack: err.stack,
+    }));
 };
 
 const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, {
     avatar: req.body.avatar,
   })
-    .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({
-        message: "Internal Server Error",
-        err: err.message,
-        stack: err.stack,
-      })
-    );
+    .then((user) => res.send(user))
+    .catch((err) => res.status(500).send({
+      message: 'Internal Server Error',
+      err: err.message,
+      stack: err.stack,
+    }));
 };
 
 module.exports = {
