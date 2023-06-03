@@ -22,22 +22,22 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((user) => res.send(user))
-    .catch((err) => res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }));
+    .then((user) => { res.send(user); })
+    .catch((err) => { res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }); })
 };
 
 const getUserById = (req, res) => {
   if (validator.isMongoId(req.params.userId)) {
     User.findById(req.params.userId)
       .then((user) => {
-        if (user) res.status(200).send(user);
+        if (user) { res.status(200).send(user); }
         else {
           res.status(ERROR_NOT_FOUND).send({
             message: 'Нет пользователя с таким id',
           });
         }
       })
-      .catch((err) => res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }));
+      .catch((err) => { res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }) });
   } else {
     res.status(ERROR_NOT_FOUND).send({
       message: 'Нет пользователя с таким id',
@@ -48,10 +48,11 @@ const getUserById = (req, res) => {
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send(user))
+    .then((user) => { res.status(201).send(user) })
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(ERROR_CODE).send({ message: `${err}` });
-      else res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` });
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE).send({ message: `${err}` });
+      } else { res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }); }
     });
 };
 
@@ -61,10 +62,11 @@ const updateUser = (req, res) => {
     about: req.body.about,
     avatar: req.body.avatar,
   })
-    .then((user) => res.send(user))
+    .then((user) => { res.send(user) })
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(ERROR_CODE).send({ message: `${err}` });
-      else res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` });
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE).send({ message: `${err}` });
+      } else { res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }); }
     });
 };
 
@@ -72,10 +74,11 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, {
     avatar: req.body.avatar,
   })
-    .then((user) => res.send(user))
+    .then((user) => { res.send(user) })
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(ERROR_CODE).send({ message: `${err}` });
-      else res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` });
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE).send({ message: `${err}` });
+      } else { res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }); }
     });
 };
 
