@@ -2,17 +2,17 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const validator = require('validator');
 const Card = require('../models/card');
-const {
-  ERROR_CODE,
-  ERROR_NOT_FOUND,
-  ERROR_INTERNAL_SERVER_ERROR,
-} = require('../utils/errors/error');
+// const {
+//   ERROR_CODE,
+//   ERROR_NOT_FOUND,
+//   ERROR_INTERNAL_SERVER_ERROR,
+// } = require('../utils/errors/error');
 
 const getCards = (req, res) => {
   Card.find({})
     .populate('owner')
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }));
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
 
 const deleteCard = (req, res) => {
@@ -21,9 +21,9 @@ const deleteCard = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.message === 'Internal Server Error') {
-        res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` });
+        res.status(500).send({ message: `Произошла ошибка ${err}` });
       } else {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Нет карточки с таким id' });
+        res.status(404).send({ message: 'Нет карточки с таким id' });
       }
     });
 };
@@ -35,8 +35,8 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: `${err}` });
-      } else { res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }); }
+        res.status(400).send({ message: `${err}` });
+      } else { res.status(500).send({ message: `Произошла ошибка ${err}` }); }
     });
 };
 
@@ -47,8 +47,8 @@ const likeCard = (req, res) => {
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
       { new: true },
     ).then((card) => res.send({ data: card }))
-      .catch((err) => res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }));
-  } else res.status(ERROR_NOT_FOUND).send({ message: 'Нет карточки с таким id' });
+      .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+  } else res.status(404).send({ message: 'Нет карточки с таким id' });
 };
 
 const dislikeCard = (req, res) => {
@@ -58,8 +58,8 @@ const dislikeCard = (req, res) => {
       { $pull: { likes: req.user._id } }, // убрать _id из массива
       { new: true },
     ).then((card) => res.send({ data: card }))
-      .catch((err) => res.status(ERROR_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка ${err}` }));
-  } else res.status(ERROR_NOT_FOUND).send({ message: 'Нет карточки с таким id' });
+      .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+  } else res.status(404).send({ message: 'Нет карточки с таким id' });
 };
 
 module.exports = {
