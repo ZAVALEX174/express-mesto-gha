@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((user) => { res.send(user); })
+    .then((user) => { res.send({ data: user }); })
     .catch((err) => { res.status(500).send({ message: `Произошла ошибка ${err}` }); });
 };
 
@@ -12,7 +12,7 @@ const getUserById = (req, res) => {
   if (validator.isMongoId(req.params.userId)) {
     User.findById(req.params.userId)
       .then((user) => {
-        if (user) { res.status(200).send(user); } else {
+        if (user) { res.status(200).send({ data: user }); } else {
           res.status(400).send({
             message: 'Нет пользователя с таким id',
           });
@@ -29,7 +29,7 @@ const getUserById = (req, res) => {
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => { res.status(201).send(user); })
+    .then((user) => { res.status(201).send({ data: user }); })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${err}` });
@@ -43,7 +43,7 @@ const updateUser = (req, res) => {
     about: req.body.about,
     avatar: req.body.avatar,
   })
-    .then((user) => { res.send(user); })
+    .then((user) => { res.send({ data: user }); })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${err}` });
@@ -55,7 +55,7 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, {
     avatar: req.body.avatar,
   })
-    .then((user) => { res.send(user); })
+    .then((user) => { res.send({ data: user }); })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${err}` });
