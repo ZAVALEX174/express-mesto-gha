@@ -83,7 +83,7 @@ const getUsers = (req, res, next) => {
     .catch((next));
 };
 
-const getUser = (req, res, next) => {
+const getUserById = (req, res, next) => {
   // const userId = req.params.userId ? req.params.userId : req.user._id;
   const { userId } = req.params;
   User.findById(userId)
@@ -185,5 +185,5 @@ const updateAvatar = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers, getUser, createUser, updateUser, updateAvatar,
+  getUsers, getUserById, createUser, updateUser, updateAvatar,
 };
