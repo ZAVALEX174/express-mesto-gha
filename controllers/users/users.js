@@ -71,32 +71,19 @@ async function updateAvatar(req, res, next) {
   }
 }
 
-// async function getCurrentUser(req, res, next) {
-//   try {
-//     const userId = req.user._id;
-//     const user = await User.findById(userId);
-
-//     if (!user) {
-//       throw new NotFoundError('Пользователь не найден');
-//     }
-
-//     res.send(user);
-//   } catch (err) {
-//     next(err);
-//   }
-// }
-
-const createUser = (req, res) => {
-  User.create(req.body)
-    .then((user) => res.status(201).send(user))
-    .catch((err) => res
-      .status(500)
-      .send({
-        message: 'Internal Server Error',
-        err: err.message,
-        stack: err.stack,
-      }));
-};
+async function createUser(req, res) {
+  try {
+    // Создаем нового пользователя на основе данных из запроса
+    const newUser = new User(req.body);
+    // Сохраняем нового пользователя в базе данных
+    await newUser.save();
+    // Отправляем статус 201 и сообщение об успешном создании пользователя
+    res.status(201).send('Пользователь успешно создан');
+  } catch (err) {
+    // Если произошла ошибка, отправляем статус 500 и сообщение об ошибке
+    res.status(500).send('Ошибка при создании пользователя');
+  }
+}
 
 module.exports = {
   getAllUsers, getUser, updateUser, updateAvatar, createUser,
