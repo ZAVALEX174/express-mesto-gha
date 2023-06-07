@@ -21,6 +21,14 @@ mongoose
     console.error(err);
   });
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '647a0f209c94eb5985ada853', // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
+
 app.use(router);
 
 app.use(errors()); // обработчик ошибок celebrate
