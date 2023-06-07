@@ -16,6 +16,8 @@ indent_size = 2
 # Line ending file format
 # Possible values - lf, crlf, cr
 end_of_line = lf
+insert_final_newline = true
+# quote_type = single
 
 # File character encoding
 # Possible values - latin1, utf-8, utf-16be, utf-16le
@@ -28,6 +30,3 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
-# Denotes whether file should end with a newline
-# Possible values - true, false
-insert_final_newline = true
