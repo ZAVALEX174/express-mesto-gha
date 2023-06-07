@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const bcrypt = require('bcryptjs');
 const { User } = require('../../models/user');
 const { ValidationError } = require('../../errors/ValidationError');
@@ -72,21 +71,33 @@ async function updateAvatar(req, res, next) {
   }
 }
 
-async function getCurrentUser(req, res, next) {
-  try {
-    const userId = req.user._id;
-    const user = await User.findById(userId);
+// async function getCurrentUser(req, res, next) {
+//   try {
+//     const userId = req.user._id;
+//     const user = await User.findById(userId);
 
-    if (!user) {
-      throw new NotFoundError('Пользователь не найден');
-    }
+//     if (!user) {
+//       throw new NotFoundError('Пользователь не найден');
+//     }
 
-    res.send(user);
-  } catch (err) {
-    next(err);
-  }
-}
+//     res.send(user);
+//   } catch (err) {
+//     next(err);
+//   }
+// }
+
+const createUser = (req, res) => {
+  User.create(req.body)
+    .then((user) => res.status(201).send(user))
+    .catch((err) => res
+      .status(500)
+      .send({
+        message: 'Internal Server Error',
+        err: err.message,
+        stack: err.stack,
+      }));
+};
 
 module.exports = {
-  getAllUsers, getUser, getCurrentUser, updateUser, updateAvatar,
+  getAllUsers, getUser, updateUser, updateAvatar, createUser,
 };

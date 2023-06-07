@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-const express = require('express');
+// const express = require('express');
 const router = require('express').Router();
 const userRoutes = require('./users');
 const cardRoutes = require('./cards');

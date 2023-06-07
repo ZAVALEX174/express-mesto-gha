@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const express = require('express');
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
@@ -39,4 +38,4 @@ router.put('/:cardId/likes', celebrate(paramsValidationConfig), putLike);
 
 router.delete('/:cardId/likes', celebrate(paramsValidationConfig), deleteLike);
 
-module.exports = { router };
+module.exports = router;

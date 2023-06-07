@@ -1,7 +1,5 @@
-// eslint-disable-next-line no-unused-vars
-const express = require('express');
+// const express = require('express');
 const router = require('express').Router();
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi } = require('celebrate');
 
 const { validateObjectId } = require('../utils/validateObjectId');
@@ -11,11 +9,12 @@ const {
   getUser,
   updateUser,
   updateAvatar,
-  getCurrentUser,
+  createUser,
 } = require('../controllers/users/users');
 
 router.get('/', getAllUsers);
-router.get('/me', getCurrentUser);
+// router.get('/', getCurrentUser);
+router.get('/', createUser);
 
 router.get(
   '/:userId',
@@ -50,4 +49,4 @@ router.patch(
   updateAvatar,
 );
 
-module.exports = { router };
+module.exports = router;

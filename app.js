@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 
-const { router } = require('./routes');
+const router = require('./routes');
 const { handleError } = require('./middlewares/handleError');
 
 const { PORT = 3000 } = process.env;
