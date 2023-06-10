@@ -1,7 +1,7 @@
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const { User } = require('../../models/user');
-// const { ValidationError } = require('../../errors/ValidationError');
-// const { NotFoundError } = require('../../errors/NotFoundError');
+const { ValidationError } = require('../../errors/ValidationError');
+const { NotFoundError } = require('../../errors/NotFoundError');
 
 async function getAllUsers(req, res) {
   try {
@@ -36,7 +36,7 @@ async function getUser(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+async function updateUser(req, res, next) {
   try {
     const userId = req.user._id;
     const { name, about } = req.body;
@@ -47,18 +47,18 @@ async function updateUser(req, res) {
     );
 
     if (!user) {
-      // throw new NotFoundError('Пользователь не найден');
-      res.status(404).json({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
+      // res.status(404).json({ message: 'Пользователь не найден' });
     }
 
     res.json(user);
   } catch (err) {
-    // next(err);
-    res.status(500).json({ message: 'Неверные данные' });
+    next(err);
+    // res.status(500).json({ message: 'Неверные данные' });
   }
 }
 
-async function updateAvatar(req, res) {
+async function updateAvatar(req, res, next) {
   try {
     const userId = req.user._id;
     const { avatar } = req.body;
@@ -69,14 +69,14 @@ async function updateAvatar(req, res) {
     );
 
     if (!user) {
-      // throw new NotFoundError('Пользователь не найден');
-      res.status(404).json({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
+      // res.status(404).json({ message: 'Пользователь не найден' });
     }
 
     res.send(user);
   } catch (err) {
-    // next(err);
-    res.status(500).json({ message: 'Неверные данные' });
+    next(err);
+    // res.status(500).json({ message: 'Неверные данные' });
   }
 }
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const { errors } = require('celebrate');
+const { errors } = require('celebrate');
 
 const router = require('./routes');
 // const { handleError } = require('./middlewares/handleError');
@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 app.use(router);
 
-// app.use(errors()); // обработчик ошибок celebrate
+app.use(errors()); // обработчик ошибок celebrate
 
 // app.use(handleError);
 

@@ -1,9 +1,9 @@
 const { error } = require('winston');
 const { Card } = require('../../models/card');
-// const { ValidationError } = require('../../errors/ValidationError');
-// const { NotFoundError } = require('../../errors/NotFoundError');
+const { ValidationError } = require('../../errors/ValidationError');
+const { NotFoundError } = require('../../errors/NotFoundError');
 // const e = require('express');
-// const { ForbiddenError } = require('../../errors/ForbiddenError');
+const { ForbiddenError } = require('../../errors/ForbiddenError');
 
 async function getAllCards(req, res) {
   try {
