@@ -65,16 +65,16 @@ async function putLike(req, res, next) {
       { new: true },
     );
 
-    // if (!card) {
-    //   throw new NotFoundError('Карточка не найдена');
-    // }
+    if (!card) {
+      throw new NotFoundError('Карточка не найдена');
+    }
 
     res.send(card);
   } catch (err) {
     // if (err.name === 'CastError' || err.name === 'ValidationError') {
     //   next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
     //   return;
-    res.status(500).json(err);
+    res.status(404).json(err);
   }
   // next(err);
   next(error);
@@ -104,9 +104,5 @@ async function deleteLike(req, res, next) {
 }
 
 module.exports = {
-  createCard,
-  deleteCard,
-  getAllCards,
-  putLike,
-  deleteLike,
+  createCard, deleteCard, getAllCards, putLike, deleteLike,
 };
