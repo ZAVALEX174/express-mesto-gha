@@ -93,7 +93,7 @@ async function createUser(req, res) {
   } catch (err) {
     // Если произошла ошибка, отправляем статус 500 и сообщение об ошибке
     // res.status(500).send('Ошибка при создании пользователя');
-    res.status(500).json(err);
+    res.status(400).json(err);
   }
 }
 
