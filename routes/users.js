@@ -16,25 +16,18 @@ router.get('/', getAllUsers);
 // router.get('/', getCurrentUser);
 router.post('/', createUser);
 
-router.get(
-  '/:userId',
+router.get('/:userId', celebrate({ params: Joi.object().keys({ userId: Joi.string().custom(validateObjectId) }) }), getUser);
+
+router.patch(
+  '/me',
   celebrate({
-    params: Joi.object().keys({
-      userId: Joi.string().custom(validateObjectId),
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
     }),
   }),
-  getUser,
+  updateUser,
 
-  router.patch(
-    '/me',
-    celebrate({
-      body: Joi.object().keys({
-        name: Joi.string().min(2).max(30),
-        about: Joi.string().min(2).max(30),
-      }),
-    }),
-    updateUser,
-  ),
 );
 
 router.patch(
