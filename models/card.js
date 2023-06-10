@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+// const validator = require('validator');
 
 const cardSchema = new mongoose.Schema(
   {
@@ -8,15 +8,15 @@ const cardSchema = new mongoose.Schema(
       required: true,
       minlength: 2,
       maxlength: 30,
-      validate: {
-        validator: (value) => validator.isAlpha(value),
-        message: 'Некорректное имя карточки',
-      },
+      // validate: {
+      //   validator: (value) => validator.isAlpha(value),
+      //   message: 'Некорректное имя карточки',
+      // },
     },
     link: {
       type: String,
       required: true,
-      validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
+      // validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
