@@ -89,9 +89,10 @@ async function deleteLike(req, res, next) {
       { new: true },
     );
 
-    // if (!card) {
-    //   throw new NotFoundError('Карточка не найдена');
-    // }
+    if (!card) {
+      // throw new NotFoundError('Карточка не найдена');
+      res.status(404).json({ message: 'Карточка не найдена' });
+    }
 
     res.send(card);
   } catch (err) {
