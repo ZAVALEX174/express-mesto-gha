@@ -71,10 +71,7 @@ async function putLike(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    // if (err.name === 'CastError' || err.name === 'ValidationError') {
-    //   next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
-    //   return;
-    res.status(404).json(err);
+    res.status(404).json({ message: 'Неверные данные' });
   }
   // next(err);
   next(error);
