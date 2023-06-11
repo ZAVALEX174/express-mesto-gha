@@ -1,8 +1,9 @@
 const { error } = require('winston');
 const { Card } = require('../../models/card');
-// const { ValidationError } = require('../../errors/ValidationError');
+const { ValidationError } = require('../../errors/ValidationError');
 const { NotFoundError } = require('../../errors/NotFoundError');
-const { ServerError } = require('../../errors/ServerError');
+// const e = require('express');
+const { ForbiddenError } = require('../../errors/ForbiddenError');
 
 async function getAllCards(req, res) {
   try {
@@ -11,8 +12,7 @@ async function getAllCards(req, res) {
     res.json(cards);
   } catch (err) {
     // next(err);
-    throw new ServerError('ошибка сервера');
-    // res.status(500).json(err);
+    res.status(500).json(err);
   }
 }
 
@@ -23,8 +23,9 @@ async function createCard(req, res) {
     const card = await Card.create({ name, link, owner: ownerId });
     res.status(201).json(card);
   } catch (err) {
-    throw new ServerError('ошибка сервера');
-    // res.status(500).json(err);
+    // if (err.name === 'CastError' || err.name === 'ValidationError') {
+    //   next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
+    res.status(500).json(err);
   }
 }
 
@@ -33,13 +34,11 @@ async function deleteCard(req, res) {
     const { cardId } = req.params;
     const card = await Card.findByIdAndDelete(cardId);
     if (!card || !cardId) {
-      throw new NotFoundError('указан не существующий id');
-      // res.status(404).json({ message: 'указан не существующий id' });
+      res.status(404).json({ message: 'указан не существующий id' });
     }
     res.json(card);
   } catch (err) {
-    throw new ServerError('ошибка сервера');
-    // res.status(500).json(err);
+    res.status(500).json(err);// если произошла ошибка возвращаем статус код 500
   }
 }
 
@@ -58,7 +57,6 @@ async function putLike(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    // throw new NotFoundError('Неверные данные');
     res.status(404).json({ message: 'Неверные данные' });
   }
   // next(err);
@@ -75,14 +73,16 @@ async function deleteLike(req, res, next) {
     );
 
     if (!card) {
-      throw new NotFoundError('Карточка не найдена');
-      // res.status(404).json({ message: 'Карточка не найдена' });
+      // throw new NotFoundError('Карточка не найдена');
+      res.status(404).json({ message: 'Карточка не найдена' });
     }
 
     res.send(card);
   } catch (err) {
-    throw new ServerError('ошибка сервера');
-    // res.status(500).json(err);
+    // if (err.name === 'CastError' || err.name === 'ValidationError') {
+    //   next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
+    //   return;
+    res.status(500).json(err);
   }
   next(error);
 }
