@@ -1,6 +1,6 @@
 // const bcrypt = require('bcryptjs');
 const { User } = require('../../models/user');
-const { ValidationError } = require('../../errors/ValidationError');
+// const { ValidationError } = require('../../errors/ValidationError');
 const { NotFoundError } = require('../../errors/NotFoundError');
 
 async function getAllUsers(req, res) {
@@ -27,11 +27,6 @@ async function getUser(req, res) {
     // res.send(user);
     res.json(user);
   } catch (err) {
-    // if (err.name === 'CastError' || err.name === 'ValidationError') {
-    //   next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
-    //   return;
-    // }
-    // next(err);
     res.status(400).json(err);
   }
 }
