@@ -58,8 +58,8 @@ async function putLike(req, res, next) {
 
     res.send(card);
   } catch (err) {
-    throw new NotFoundError('Неверные данные');
-    // res.status(404).json({ message: 'Неверные данные' });
+    // throw new NotFoundError('Неверные данные');
+    res.status(404).json({ message: 'Неверные данные' });
   }
   // next(err);
   next(error);

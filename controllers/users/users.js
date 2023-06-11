@@ -78,7 +78,7 @@ async function createUser(req, res) {
     res.status(200).json(user);
   } catch (err) {
     // throw new ValidationError('Пользователь не найден');
-    res.status(400).json(err);
+    res.status(404).json(err);
   }
 }
 
