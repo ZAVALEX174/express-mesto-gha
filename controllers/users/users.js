@@ -26,8 +26,8 @@ async function getUser(req, res) {
 
     res.json(user);
   } catch (err) {
-    throw new ValidationError('Пользователь не найден');
-    // res.status(400).json(err);
+    // throw new ValidationError('Пользователь не найден');
+    res.status(400).json(err);
   }
 }
 
