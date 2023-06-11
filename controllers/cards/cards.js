@@ -30,29 +30,16 @@ async function createCard(req, res) {
 }
 
 async function deleteCard(req, res) {
+  console.log('deleteCard');
   try {
     const { cardId } = req.params;
-
-    // const card = await Card.findById(cardId).populate('owner');
-
-    if (!cardId) {
-      res.status(400).json({ message: 'id не указан' });
-    }
-
-    // const ownerId = card.owner.id;
-    // const userId = req.user._id;
-
-    // if (ownerId !== userId) {
-    //   throw new ForbiddenError('Нельзя удалить чужую карточку');
-    // }
-
-    // await Card.findByIdAndRemove(cardId);
-
-    // res.send(card);
     const card = await Card.findByIdAndDelete(cardId);
+    if (!card || !cardId) {
+      res.status(404).json({ message: 'указан не существующий id' });
+    }
     res.json(card);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json(err);// если произошла ошибка возвращаем статус код 500
   }
 }
 
