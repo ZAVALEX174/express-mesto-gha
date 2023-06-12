@@ -1,7 +1,9 @@
 const { Card } = require('../../models/card');
+const {
+  NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
+} = require('../../CodeStatus/CodeStatus');
 
 async function getAllCards(req, res) {
-  const SERVER_ERROR = 500;
   try {
     const cards = await Card.find({});
     res.json(cards);
@@ -11,9 +13,6 @@ async function getAllCards(req, res) {
 }
 
 async function createCard(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const OK = 201;
   try {
     const { name, link } = req.body;
     const ownerId = req.user._id;
@@ -29,9 +28,6 @@ async function createCard(req, res) {
 }
 
 async function deleteCard(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const NOT_FOUND_ERROR = 404;
   try {
     const { cardId } = req.params;
     const card = await Card.findByIdAndDelete(cardId);
@@ -50,9 +46,6 @@ async function deleteCard(req, res) {
 }
 
 async function putLike(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const NOT_FOUND_ERROR = 404;
   try {
     const userId = req.user._id;
     const card = await Card.findByIdAndUpdate(
@@ -75,9 +68,6 @@ async function putLike(req, res) {
 }
 
 async function deleteLike(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const NOT_FOUND_ERROR = 404;
   try {
     const userId = req.user._id;
     const card = await Card.findByIdAndUpdate(

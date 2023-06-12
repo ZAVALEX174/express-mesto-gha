@@ -1,7 +1,9 @@
 const { User } = require('../../models/user');
+const {
+  NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
+} = require('../../CodeStatus/CodeStatus');
 
 async function getAllUsers(req, res) {
-  const SERVER_ERROR = 500;
   try {
     const users = await User.find({});
     res.json(users);
@@ -11,9 +13,6 @@ async function getAllUsers(req, res) {
 }
 
 async function getUser(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const NOT_FOUND_ERROR = 404;
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
@@ -33,12 +32,7 @@ async function getUser(req, res) {
 }
 
 async function updateUser(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const NOT_FOUND_ERROR = 404;
   try {
-    const error = ('Пользователь по данному id отсутствуе в базе');
-    error.statusCode = 404;
     const userId = req.user._id;
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -62,9 +56,6 @@ async function updateUser(req, res) {
 }
 
 async function updateAvatar(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const NOT_FOUND_ERROR = 404;
   try {
     const userId = req.user._id;
     const { avatar } = req.body;
@@ -89,9 +80,6 @@ async function updateAvatar(req, res) {
 }
 
 async function createUser(req, res) {
-  const SERVER_ERROR = 500;
-  const VALIDATION_ERROR = 400;
-  const OK = 201;
   try {
     const { name, about, avatar } = req.body;
     const user = await User.create({ name, about, avatar });
