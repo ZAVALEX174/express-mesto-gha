@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 
 const cardSchema = new mongoose.Schema(
   {
@@ -8,10 +7,6 @@ const cardSchema = new mongoose.Schema(
       required: true,
       minlength: 2,
       maxlength: 30,
-      validate: {
-        validator: (value) => validator.isAlpha(value),
-        message: 'Некорректное имя карточки',
-      },
     },
     link: {
       type: String,
@@ -31,8 +26,6 @@ const cardSchema = new mongoose.Schema(
         },
       ],
       default: [],
-      minlength: 2,
-      maxlength: 30,
     },
     createdAt: {
       type: Date,

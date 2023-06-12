@@ -1,59 +1,70 @@
-// const bcrypt = require('bcryptjs');
 const { User } = require('../../models/user');
-// const { ValidationError } = require('../../errors/ValidationError');
-const { NotFoundError } = require('../../errors/NotFoundError');
 
 async function getAllUsers(req, res) {
+  const SERVER_ERROR = 500;
   try {
     const users = await User.find({});
-    // res.send(users);
     res.json(users);
   } catch (err) {
-    // next(err);
-    res.status(500).json(err);
+    res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
   }
 }
 
 async function getUser(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const NOT_FOUND_ERROR = 404;
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
 
     if (!user) {
-      // throw new NotFoundError('Пользователь не найден');
-      res.status(404).json({ message: 'Пользователь не найден' });
+      res.status(NOT_FOUND_ERROR).json({ message: 'Пользователь не найден' });
+    } else {
+      res.json(user);
     }
-
-    // res.send(user);
-    res.json(user);
   } catch (err) {
-    res.status(400).json(err);
+    if (err.name === 'CastError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
 }
 
-async function updateUser(req, res, next) {
+async function updateUser(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const NOT_FOUND_ERROR = 404;
   try {
+    const error = ('Пользователь по данному id отсутствуе в базе');
+    error.statusCode = 404;
     const userId = req.user._id;
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
       userId,
       { name, about },
-      { new: true },
+      { new: true, runValidators: true },
     );
 
     if (!user) {
-      throw new NotFoundError('Пользователь не найден');
-      // res.status(404).json({ message: 'Пользователь не найден' });
+      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
+    } else {
+      res.json(user);
     }
-
-    res.json(user);
   } catch (err) {
-    next(err);
-    // res.status(500).json({ message: 'Неверные данные' });
+    if (err.name === 'ValidationError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
 }
 
-async function updateAvatar(req, res, next) {
+async function updateAvatar(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const NOT_FOUND_ERROR = 404;
   try {
     const userId = req.user._id;
     const { avatar } = req.body;
@@ -64,31 +75,33 @@ async function updateAvatar(req, res, next) {
     );
 
     if (!user) {
-      throw new NotFoundError('Пользователь не найден');
-      // res.status(404).json({ message: 'Пользователь не найден' });
+      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
+    } else {
+      res.json(user);
     }
-
-    res.send(user);
   } catch (err) {
-    next(err);
-    // res.status(500).json({ message: 'Неверные данные' });
+    if (err.name === 'ValidationError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
 }
 
 async function createUser(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const OK = 201;
   try {
-    // Создаем нового пользователя на основе данных из запроса
-    // const newUser = new User(req.body);
-    // Сохраняем нового пользователя в базе данных
-    // await newUser.save();
-    // Отправляем статус 201 и сообщение об успешном создании пользователя
     const { name, about, avatar } = req.body;
     const user = await User.create({ name, about, avatar });
-    res.status(200).json(user);
+    res.status(OK).json(user);
   } catch (err) {
-    // Если произошла ошибка, отправляем статус 500 и сообщение об ошибке
-    // res.status(500).send('Ошибка при создании пользователя');
-    res.status(400).json(err);
+    if (err.name === 'ValidationError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
 }
 

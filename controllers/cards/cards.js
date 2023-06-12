@@ -1,81 +1,102 @@
-const { error } = require('winston');
 const { Card } = require('../../models/card');
-const { NotFoundError } = require('../../errors/NotFoundError');
 
 async function getAllCards(req, res) {
+  const SERVER_ERROR = 500;
   try {
     const cards = await Card.find({});
-    // res.send(cards);
     res.json(cards);
   } catch (err) {
-    // next(err);
-    res.status(500).json(err);
+    res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
   }
 }
 
 async function createCard(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const OK = 201;
   try {
     const { name, link } = req.body;
     const ownerId = req.user._id;
     const card = await Card.create({ name, link, owner: ownerId });
-    res.status(201).json(card);
+    res.status(OK).json(card);
   } catch (err) {
-    res.status(500).json(err);
+    if (err.name === 'ValidationError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
 }
 
 async function deleteCard(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const NOT_FOUND_ERROR = 404;
   try {
     const { cardId } = req.params;
     const card = await Card.findByIdAndDelete(cardId);
-    if (!card || !cardId) {
-      res.status(404).json({ message: 'указан не существующий id' });
+    if (!card) {
+      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
+    } else {
+      res.json(card);
     }
-    res.json(card);
   } catch (err) {
-    res.status(500).json(err);// если произошла ошибка возвращаем статус код 500
+    if (err.name === 'CastError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
 }
 
-async function putLike(req, res, next) {
+async function putLike(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const NOT_FOUND_ERROR = 404;
   try {
     const userId = req.user._id;
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
-      { $addToSet: { likes: userId } }, // добавить _id в массив, если его там нет
-      { new: true },
+      { $addToSet: { likes: userId } },
+      { new: true, runValidators: true },
     );
-
     if (!card) {
-      throw new NotFoundError('Карточка не найдена');
+      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
+    } else {
+      res.json(card);
     }
-
-    res.send(card);
   } catch (err) {
-    res.status(404).json({ message: 'Неверные данные' });
+    if (err.name === 'CastError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
-  // next(err);
-  next(error);
 }
 
-async function deleteLike(req, res, next) {
+async function deleteLike(req, res) {
+  const SERVER_ERROR = 500;
+  const VALIDATION_ERROR = 400;
+  const NOT_FOUND_ERROR = 404;
   try {
     const userId = req.user._id;
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
-      { $pull: { likes: userId } }, // убрать _id из массива, если он есть
-      { new: true },
+      { $pull: { likes: userId } },
+      { new: true, runValidators: true },
     );
-
     if (!card) {
-      res.status(404).json({ message: 'Карточка не найдена' });
+      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
+    } else {
+      res.json(card);
     }
-
-    res.send(card);
   } catch (err) {
-    res.status(500).json(err);
+    if (err.name === 'CastError') {
+      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+    } else {
+      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    }
   }
-  next(error);
 }
 
 module.exports = {

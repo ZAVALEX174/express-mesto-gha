@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 
 const router = require('./routes');
-// const { handleError } = require('./middlewares/handleError');
 
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/mestodb';
@@ -34,8 +33,7 @@ app.use(router);
 
 app.use(errors()); // обработчик ошибок celebrate
 
-// app.use(handleError);
-
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`App started on port ${PORT}`);
 });

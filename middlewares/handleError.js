@@ -1,4 +1,4 @@
-function handleError(err, req, res, next) {
+function handleError(err, req, res) {
   const { statusCode = 500 } = err;
   let { message } = err;
 
