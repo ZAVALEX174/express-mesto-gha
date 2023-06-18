@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
+
+// const rateLimit = require('express-rate-limit');
 
 const router = require('./routes');
+const { handleError } = require('./middlewares/handleError');
 
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/mestodb';
@@ -21,17 +25,21 @@ mongoose
     // console.error(err);
   });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64822099eba3c0174009b682', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '64822099eba3c0174009b682',
+//   };
 
-  next();
-});
+//   next();
+// });
+
+app.use(helmet());
 
 app.use(router);
 
 app.use(errors()); // обработчик ошибок celebrate
+
+app.use(handleError);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

@@ -1,37 +1,43 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { User } = require('../../models/user');
-const {
-  NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
-} = require('../../CodeStatus/CodeStatus');
+const { ConflictError } = require('../../errors/ConflictError');
+const { ValidationError } = require('../../errors/ValidationError');
+const { UnauthorizedError } = require('../../errors/UnauthorizedError');
+const { NotFoundError } = require('../../errors/NotFoundError');
+// const {
+//   NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
+// } = require('../../CodeStatus/CodeStatus');
 
-async function getAllUsers(req, res) {
+async function getAllUsers(req, res, next) {
   try {
     const users = await User.find({});
-    res.json(users);
+    res.send(users);
   } catch (err) {
-    res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    next(err);
   }
 }
 
-async function getUser(req, res) {
+async function getUser(req, res, next) {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
 
     if (!user) {
-      res.status(NOT_FOUND_ERROR).json({ message: 'Пользователь не найден' });
-    } else {
-      res.json(user);
+      throw new NotFoundError('Пользователь не найден');
     }
+
+    res.send(user);
   } catch (err) {
-    if (err.name === 'CastError') {
-      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
-    } else {
-      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    if (err.name === 'CastError' || err.name === 'ValidationError') {
+      next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
+      return;
     }
+    next(err);
   }
 }
 
-async function updateUser(req, res) {
+async function updateUser(req, res, next) {
   try {
     const userId = req.user._id;
     const { name, about } = req.body;
@@ -42,20 +48,16 @@ async function updateUser(req, res) {
     );
 
     if (!user) {
-      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
-    } else {
-      res.json(user);
+      throw new NotFoundError('Пользователь не найден');
     }
+
+    res.send(user);
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
-    } else {
-      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
-    }
+    next(err);
   }
 }
 
-async function updateAvatar(req, res) {
+async function updateAvatar(req, res, next) {
   try {
     const userId = req.user._id;
     const { avatar } = req.body;
@@ -66,33 +68,112 @@ async function updateAvatar(req, res) {
     );
 
     if (!user) {
-      res.status(NOT_FOUND_ERROR).json({ message: 'указан не существующий id' });
-    } else {
-      res.json(user);
+      throw new NotFoundError('Пользователь не найден');
     }
+
+    res.send(user);
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
-    } else {
-      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
-    }
+    next(err);
   }
 }
 
-async function createUser(req, res) {
+// async function createUser(req, res) {
+//   try {
+//     const { name, about, avatar } = req.body;
+//     const user = await User.create({ name, about, avatar });
+//     res.status(OK).json(user);
+//   } catch (err) {
+//     if (err.name === 'ValidationError') {
+//       res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
+//     } else {
+//       res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+//     }
+//   }
+// }
+//= ==========================
+const SALT_LENGTH = 10;
+
+async function createUser(req, res, next) {
   try {
-    const { name, about, avatar } = req.body;
-    const user = await User.create({ name, about, avatar });
-    res.status(OK).json(user);
+    const {
+      email, password, name, about, avatar,
+    } = req.body;
+    const passwordHash = await bcrypt.hash(password, SALT_LENGTH);
+
+    let user = await User.create({
+      email,
+      password: passwordHash,
+      name,
+      about,
+      avatar,
+    });
+
+    user = user.toObject();
+    delete user.password;
+    res.status(201).send(user);
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
-    } else {
-      res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
+    if (err.name === 'CastError' || err.name === 'ValidationError') {
+      next(new ValidationError(`Неверные данные в ${err.path ?? 'запросе'}`));
+      return;
     }
+    if (err.code === 11000) {
+      next(new ConflictError('Пользователь с таким email уже существует'));
+      return;
+    }
+
+    next(err);
   }
 }
+
+async function login(req, res, next) {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user) {
+      throw new UnauthorizedError('Неверные данные для входа');
+    }
+
+    const hasRightPassword = await bcrypt.compare(password, user.password);
+
+    if (!hasRightPassword) {
+      throw new UnauthorizedError('Неверные данные для входа');
+    }
+
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      'secretkey',
+      {
+        expiresIn: '7d',
+      },
+    );
+
+    res.send({ jwt: token });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getCurrentUser(req, res, next) {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new NotFoundError('Пользователь не найден');
+    }
+
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+//= ===========================
 
 module.exports = {
-  getAllUsers, getUser, updateUser, updateAvatar, createUser,
+  getAllUsers, getUser, updateUser, updateAvatar, createUser, login, getCurrentUser,
 };
