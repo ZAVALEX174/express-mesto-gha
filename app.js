@@ -43,6 +43,10 @@ app.use(router);
 app.use(errors()); // обработчик ошибок celebrate
 
 app.use(handleError);
+// здесь обрабатываем все ошибки
+app.use((err, req, res, next) => {
+  res.status(err.statusCode).send({ message: err.message });
+});
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
