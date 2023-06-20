@@ -5,9 +5,6 @@ const { ConflictError } = require('../../errors/ConflictError');
 const { ValidationError } = require('../../errors/ValidationError');
 const { UnauthorizedError } = require('../../errors/UnauthorizedError');
 const { NotFoundError } = require('../../errors/NotFoundError');
-// const {
-//   NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
-// } = require('../../CodeStatus/CodeStatus');
 
 async function getAllUsers(req, res, next) {
   try {
@@ -77,20 +74,6 @@ async function updateAvatar(req, res, next) {
   }
 }
 
-// async function createUser(req, res) {
-//   try {
-//     const { name, about, avatar } = req.body;
-//     const user = await User.create({ name, about, avatar });
-//     res.status(OK).json(user);
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       res.status(VALIDATION_ERROR).json({ message: 'Неверные данные' });
-//     } else {
-//       res.status(SERVER_ERROR).json({ message: 'Ошибка на стороне сервера' });
-//     }
-//   }
-// }
-//= ==========================
 const SALT_LENGTH = 10;
 
 async function createUser(req, res, next) {
@@ -124,38 +107,6 @@ async function createUser(req, res, next) {
     next(err);
   }
 }
-
-// async function login(req, res, next) {
-//   try {
-//     const { email, password } = req.body;
-
-//     const user = await User.findOne({ email }).select('+password');
-
-//     if (!user) {
-//       throw new UnauthorizedError('Неверные данные для входа');
-//     }
-
-//     const hasRightPassword = await bcrypt.compare(password, user.password);
-
-//     if (!hasRightPassword) {
-//       throw new UnauthorizedError('Неверные данные для входа');
-//     }
-
-//     const token = jwt.sign(
-//       {
-//         _id: user._id,
-//       },
-//       'secretkey',
-//       {
-//         expiresIn: '7d',
-//       },
-//     );
-
-//     res.send({ jwt: token });
-//   } catch (err) {
-//     next(err);
-//   }
-// }
 
 async function login(req, res, next) {
   try {
@@ -210,8 +161,6 @@ async function getCurrentUser(req, res, next) {
     next(err);
   }
 }
-
-//= ===========================
 
 module.exports = {
   getAllUsers, getUser, updateUser, updateAvatar, createUser, login, getCurrentUser,
