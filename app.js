@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
 // const rateLimit = require('express-rate-limit');
@@ -34,6 +35,8 @@ mongoose
 // });
 
 app.use(helmet());
+
+app.use(cookieParser());
 
 app.use(router);
 
