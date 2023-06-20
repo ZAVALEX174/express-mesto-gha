@@ -40,9 +40,12 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'secretkey');
   } catch (err) {
-    const error = new UnauthorizedError('Необходима авторизация');
-    err.statusCode = 401;
-    next(error);
+    throw new UnauthorizedError('Необходима авторизация');
+    // next(err);
+
+    // const error = new UnauthorizedError('Необходима авторизация');
+    // err.statusCode = 401;
+    // next(error);
   }
 
   req.user = payload;
