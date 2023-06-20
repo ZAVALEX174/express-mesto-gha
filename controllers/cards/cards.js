@@ -1,8 +1,7 @@
-const express = require('express');
 const { Card } = require('../../models/card');
 const { ValidationError } = require('../../errors/ValidationError');
 const { ForbiddenError } = require('../../errors/ForbiddenError');
-const NotFoundError = require('../../errors/NotFoundError');
+const { NotFoundError } = require('../../errors/NotFoundError');
 // const {
 //   NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
 // } = require('../../CodeStatus/CodeStatus');

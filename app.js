@@ -1,15 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+
+// const rateLimit = require('express-rate-limit');
 
 const router = require('./routes');
 const { handleError } = require('./middlewares/handleError');
-const bodyParser = require('body-parser');
-const { auth } = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/mestodb';
@@ -40,22 +38,11 @@ app.use(helmet());
 
 app.use(cookieParser());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
-app.use(auth);
 app.use(router);
 
 app.use(errors()); // обработчик ошибок celebrate
 
 app.use(handleError);
-
-// здесь обрабатываем все ошибки
-app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-}); 
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

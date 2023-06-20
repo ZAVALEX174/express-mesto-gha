@@ -1,9 +1,10 @@
+// eslint-disable-next-line no-unused-vars
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
 const { login, createUser } = require('../controllers/users/users');
 const { auth } = require('../middlewares/auth');
-const NotFoundError = require('../errors/NotFoundError');
+const { NotFoundError } = require('../errors/NotFoundError');
 const userRoutes = require('./users');
 const cardRoutes = require('./cards');
 

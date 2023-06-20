@@ -1,11 +1,10 @@
-const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User } = require('../../models/user');
 const { ConflictError } = require('../../errors/ConflictError');
 const { ValidationError } = require('../../errors/ValidationError');
 const { UnauthorizedError } = require('../../errors/UnauthorizedError');
-const NotFoundError = require('../../errors/NotFoundError');
+const { NotFoundError } = require('../../errors/NotFoundError');
 // const {
 //   NOT_FOUND_ERROR, VALIDATION_ERROR, SERVER_ERROR, OK,
 // } = require('../../CodeStatus/CodeStatus');
@@ -25,7 +24,7 @@ async function getUser(req, res, next) {
     const user = await User.findById(userId);
 
     if (!user) {
-      throw new NotFoundError({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
     }
 
     res.send(user);
@@ -49,7 +48,7 @@ async function updateUser(req, res, next) {
     );
 
     if (!user) {
-      throw new NotFoundError({ message: 'Пользователь не найден' });
+      throw new NotFoundError('Пользователь не найден');
     }
 
     res.send(user);
