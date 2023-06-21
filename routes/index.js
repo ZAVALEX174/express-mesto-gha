@@ -4,6 +4,7 @@ const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
 const { login, createUser } = require('../controllers/users/users');
 const { auth } = require('../middlewares/auth');
+const { urlRegex } = require('../utils/urlRegex');
 const { NotFoundError } = require('../errors/NotFoundError');
 const userRoutes = require('./users');
 const cardRoutes = require('./cards');
@@ -16,7 +17,7 @@ router.post(
       password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+      avatar: Joi.string().regex(urlRegex),
     }),
   }),
   createUser,

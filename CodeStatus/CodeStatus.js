@@ -1,8 +1,0 @@
-const SERVER_ERROR = 500;
-const VALIDATION_ERROR = 400;
-const NOT_FOUND_ERROR = 404;
-const OK = 201;
-
-module.exports = {
-  SERVER_ERROR, VALIDATION_ERROR, NOT_FOUND_ERROR, OK,
-};

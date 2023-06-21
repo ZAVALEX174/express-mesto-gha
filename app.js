@@ -4,8 +4,6 @@ const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
-// const rateLimit = require('express-rate-limit');
-
 const router = require('./routes');
 const { handleError } = require('./middlewares/handleError');
 
@@ -26,14 +24,6 @@ mongoose
     // console.error(err);
   });
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '64822099eba3c0174009b682',
-//   };
-
-//   next();
-// });
-
 app.use(helmet());
 
 app.use(cookieParser());
@@ -43,10 +33,6 @@ app.use(router);
 app.use(errors()); // обработчик ошибок celebrate
 
 app.use(handleError);
-// здесь обрабатываем все ошибки
-// app.use((err, req, res, next) => {
-//   res.status(err.statusCode).send({ message: err.message });
-// });
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
